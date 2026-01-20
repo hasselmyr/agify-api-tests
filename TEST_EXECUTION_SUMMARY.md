@@ -264,7 +264,7 @@ agify-api-tests/
 ## Technical Stack
 
 - **Language**: TypeScript 5.3.3
-- **Testing Framework**: Cucumber (BDD) v11.1.1
+- **Testing Framework**: Cucumber (BDD) v10.9.0
 - **HTTP Client**: Axios
 - **Runtime**: Node.js v25.2.1
 - **Package Manager**: npm v10.9.2

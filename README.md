@@ -308,7 +308,7 @@ Tested with:
 - Node.js v25.2.1
 - npm v10.9.2
 - TypeScript v5.3.3
-- @cucumber/cucumber v11.1.1
+- @cucumber/cucumber v10.9.0
 
 ## CI/CD Integration
 
