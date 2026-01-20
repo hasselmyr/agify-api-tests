@@ -75,7 +75,7 @@ Due to the API's free tier limit (100 requests/day), you may encounter rate limi
 ```bash
 npm test -- --tags "not @skip and not @localization"
 ```
-This runs ~23 scenarios without hitting rate limits.
+This runs ~25 scenarios without hitting rate limits.
 
 ### Option 2: Wait for Rate Limit Reset
 The free tier resets daily. Wait 24 hours and run:
@@ -97,7 +97,7 @@ This test suite provides **100% coverage** of all documented API error codes:
 
 | Status Code | Error Type | Test Coverage |
 |-------------|------------|---------------|
-| **200** | Success | 29 scenarios ✅ |
+| **200** | Success | 31 scenarios ✅ |
 | **401** | Invalid API key | @skip ✅ |
 | **402** | Expired subscription | @skip ✅ |
 | **422** | Missing 'name' parameter | Active ✅ |
@@ -107,7 +107,7 @@ This test suite provides **100% coverage** of all documented API error codes:
 
 ## Test Coverage
 
-**Total: 35 scenarios** (29 active + 6 require API key)
+**Total: 38 scenarios** (31 active + 7 require API key)
 
 ### Functional Tests
 - ✓ Valid name requests (common, uncommon, multiple languages)
@@ -125,6 +125,7 @@ This test suite provides **100% coverage** of all documented API error codes:
 - ✓ Invalid country code handling
 - ✓ Case insensitivity of country codes
 - ✓ Localized vs global predictions
+- ✓ Batch requests with localization
 
 ### Edge Cases
 - ✓ Empty name parameter
@@ -141,6 +142,7 @@ This test suite provides **100% coverage** of all documented API error codes:
 ### Batch Request Tests
 - ✓ Multiple names in single request
 - ✓ Up to 10 names batch processing
+- ✓ Batch requests with country localization
 - ⊘ Insufficient quota error (429) - @skip
 
 ### Authentication Tests (@skip - Require API Key)
@@ -181,7 +183,7 @@ Authentication tests are skipped by default because they require a valid API key
 ```
 agify-api-tests/
 ├── features/              # Cucumber feature files
-│   ├── agify.feature     # BDD scenarios (35 scenarios)
+│   ├── agify.feature     # BDD scenarios (38 scenarios)
 │   └── support/          # Step definitions and setup
 │       ├── steps/
 │       │   └── agify.steps.ts  # Step implementations
@@ -201,7 +203,7 @@ const response = await client.getAgePrediction('Michael');
 // Returns: { name: "Michael", age: 62, count: 298219 }
 ```
 
-### Batch Requests (NEW)
+### Batch Requests
 ```typescript
 const names = ['Michael', 'Sarah', 'David'];
 const response = await client.getBatchAgePredictions(names);
@@ -221,13 +223,13 @@ const response = await client.getAgePredictionWithAuth('Michael', apiKey);
 
 ## Test Results
 
-**Current Status**: 35/35 scenarios passing ✅
+**Current Status**: 38/38 scenarios passing ✅
 
 ### Execution Summary
 ```
-35 scenarios (35 passed)
-153 steps (153 passed)
-Execution time: ~7.6 seconds
+38 scenarios (38 passed)
+167 steps (167 passed)
+Execution time: ~8.1 seconds
 ```
 
 ## Discovered API Behaviors
@@ -259,13 +261,13 @@ The agify.io API has a free tier limit of **100 requests per day**.
 
 ### Example Daily Test Strategy
 ```bash
-# Morning: Run active tests (uses ~23 requests)
+# Morning: Run active tests (uses ~25 requests)
 npm test -- --tags "not @skip and not @localization"
 
-# Afternoon: Run localization tests (uses ~6 requests)
+# Afternoon: Run localization tests (uses ~12 requests)
 npm test -- --tags "@localization"
 
-# Total: ~29 requests (well within 100/day limit)
+# Total: ~37 requests (well within 100/day limit)
 ```
 
 ## Known Issues & Limitations
