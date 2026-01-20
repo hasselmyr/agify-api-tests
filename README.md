@@ -1,11 +1,14 @@
-# Agify.io API BDD Tests
+# Agify.io API Test Suite
 
-Comprehensive BDD test suite for the agify.io API using Cucumber and TypeScript with **100% error code coverage**.
+BDD test suite for the [agify.io](https://agify.io) API using Cucumber and TypeScript.
+
+**Author:** Anton  
+**Purpose:** Kaluza QA Engineer Technical Assessment
 
 ## Requirements
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0
+- Node.js v25.2.1
+- npm v10.9.2
 
 ## Installation
 
@@ -15,347 +18,195 @@ npm install
 
 ## Running Tests
 
-Execute all tests:
 ```bash
 npm test
 ```
 
-Run tests excluding rate-limited scenarios:
-```bash
-npm test -- --tags "not @skip and not @localization"
-```
-
-Generate HTML report:
-```bash
-npm run test:report
-```
-
-The HTML report will be generated in `reports/cucumber-report.html`.
-
-## Test Organization & Tags
-
-Tests are organized with tags for flexible execution:
-
-### Active Tests (Run Without API Key)
-- All 200 success scenarios
-- Error handling (422 - Missing name, Invalid UTF8)
-- Batch request functionality
-- Edge cases and internationalization
-
-### @skip Tests (Require API Key)
-- Authentication tests (401, 402)
-- Rate limiting tests (429)
-- Batch quota tests
-
-### @localization Tests
-- Country-specific predictions
-- May hit rate limits on free tier
-
-### Run Commands
+### Run with Tags
 
 ```bash
-# All active tests (no API key needed)
-npm test -- --tags "not @skip and not @localization"
+# Run all tests except those requiring API key
+npm test -- --tags "not @skip"
 
-# Only localization tests
+# Run only localisation tests
 npm test -- --tags "@localization"
 
-# Only authentication tests (requires API key)
-npm test -- --tags "@skip"
+# Run only known bug tests
+npm test -- --tags "@bug"
 
-# Everything
-npm test
+# Run all tests except known bugs
+npm test -- --tags "not @bug and not @skip"
 ```
 
-## Demonstrating Test Execution
+## Test Execution Results
 
-Due to the API's free tier limit (100 requests/day), you may encounter rate limiting when running the full suite multiple times.
-
-### Option 1: Run Active Tests Only
-```bash
-npm test -- --tags "not @skip and not @localization"
+### All Tests
 ```
-This runs ~25 scenarios without hitting rate limits.
-
-### Option 2: Wait for Rate Limit Reset
-The free tier resets daily. Wait 24 hours and run:
-```bash
-npm test
+38 scenarios (1 failed, 37 passed)
+167 steps (1 failed, 1 skipped, 165 passed)
+0m08.732s
 ```
 
-### Option 3: Use API Key
-Obtain an API key from https://agify.io/store for higher limits, then:
-```bash
-export AGIFY_API_KEY="your_key_here"  # Linux/Mac
-$env:AGIFY_API_KEY="your_key_here"    # Windows PowerShell
-npm test
+### Excluding Known Bugs (`--tags "not @bug and not @skip"`)
+```
+37 scenarios (37 passed)
+163 steps (163 passed)
 ```
 
-## Complete Error Code Coverage (100%)
-
-This test suite provides **100% coverage** of all documented API error codes:
-
-| Status Code | Error Type | Test Coverage |
-|-------------|------------|---------------|
-| **200** | Success | 31 scenarios ✅ |
-| **401** | Invalid API key | @skip ✅ |
-| **402** | Expired subscription | @skip ✅ |
-| **422** | Missing 'name' parameter | Active ✅ |
-| **422** | Invalid UTF8 in 'name' parameter | Active ✅ |
-| **429** | Request limit reached | @skip ✅ |
-| **429** | Batch limit too low | @skip ✅ |
+> **Note:** The single failing test is intentional — it documents a bug where the API behaviour does not match the documented contract. See [Issues Found](#issues-found) for details.
 
 ## Test Coverage
 
-**Total: 38 scenarios** (31 active + 7 require API key)
-
 ### Functional Tests
-- ✓ Valid name requests (common, uncommon, multiple languages)
-- ✓ Response structure validation
-- ✓ Field type validation (name, age, count)
-- ✓ Case sensitivity handling
-- ✓ Special characters in names (hyphens, accents, umlauts, Cyrillic, Chinese)
-- ✓ Numeric characters in names
-- ✓ Full name parsing (first + last name)
-- ✓ Multi-part names (e.g., "Maria Elena Garcia")
-- ✓ **Batch requests** (up to 10 names per request)
-
-### Localization (@localization tag)
-- ✓ Country codes (US, GB, AU, CA, ES, CN)
-- ✓ Invalid country code handling
-- ✓ Case insensitivity of country codes
-- ✓ Localized vs global predictions
-- ✓ Batch requests with localization
-
-### Edge Cases
-- ✓ Empty name parameter
-- ✓ Missing name parameter (422)
-- ✓ **Invalid UTF8 in name** (422)
-- ✓ Very long names
-- ✓ Rare/uncommon names (null age handling)
+| Category | Scenarios | Description |
+|----------|-----------|-------------|
+| Basic Requests | 8 | Common names, lowercase, response structure |
+| Internationalisation | 6 | Accented characters, umlauts, Cyrillic, Chinese |
+| Name Parsing | 4 | Hyphenated, full names, multi-part names |
+| Edge Cases | 5 | Empty name, very long names, numeric characters, rare names |
+| Batch Requests | 6 | Multiple names, up to 10 names, with localisation |
+| Localisation | 6 | Country codes, invalid codes, case sensitivity |
+| Error Handling | 3 | Missing parameter (422), invalid parameter (422) |
 
 ### Non-Functional Tests
-- ✓ Response time validation (< 2000ms)
-- ✓ Consistency of results for same name
-- ✓ Count field validation
+- Response time validation (< 2000ms)
+- Consistency of results for repeated requests
+- Response structure validation
 
-### Batch Request Tests
-- ✓ Multiple names in single request
-- ✓ Up to 10 names batch processing
-- ✓ Batch requests with country localization
-- ⊘ Insufficient quota error (429) - @skip
+### Authentication Tests (@skip)
+These tests require an API key and are skipped by default:
+- Valid/invalid API key handling (401)
+- Expired subscription (402)
+- Rate limiting (429)
+- Rate limit headers
 
-### Authentication Tests (@skip - Require API Key)
-- ⊘ Valid API key authentication
-- ⊘ Invalid API key returns 401
-- ⊘ Expired subscription returns 402
-- ⊘ Rate limit headers with API key
-- ⊘ API key increases rate limit
-- ⊘ Exceeding rate limit returns 429
+## Error Code Coverage
 
-## Running Authentication Tests
+| Code | Description | Status |
+|------|-------------|--------|
+| 200 | Success | ✅ Tested |
+| 401 | Invalid API key | ✅ Tested (@skip) |
+| 402 | Subscription inactive | ✅ Tested (@skip) |
+| 422 | Missing 'name' parameter | ✅ Tested |
+| 422 | Invalid 'name' parameter | ⚠️ **API Bug** (see below) |
+| 429 | Request limit reached | ✅ Tested (@skip) |
+| 429 | Batch limit too low | ✅ Tested (@skip) |
 
-Authentication tests are skipped by default because they require a valid API key.
+## Issues Found
 
-1. **Obtain an API key** from https://agify.io/store
+### BUG-001: Invalid Name Parameter Returns Wrong HTTP Status Code
 
-2. **Set environment variable**:
-   ```bash
-   # Linux/Mac
-   export AGIFY_API_KEY="your_api_key_here"
-   
-   # Windows (PowerShell)
-   $env:AGIFY_API_KEY="your_api_key_here"
-   
-   # Windows (Command Prompt)
-   set AGIFY_API_KEY=your_api_key_here
-   ```
+| Field | Detail |
+|-------|--------|
+| **Severity** | Medium |
+| **Endpoint** | `GET https://api.agify.io?name=<invalid_utf8>` |
+| **Documentation** | https://agify.io/documentation#responses |
+| **Tag** | `@bug` |
 
-3. **Run authentication tests**:
-   ```bash
-   npm test -- --tags "@skip"
-   ```
+**Steps to Reproduce:**
+1. Send a GET request to `https://api.agify.io` with invalid UTF-8 bytes in the name parameter
+2. Observe the HTTP status code in the response
 
-**Security Note**: Never commit API keys to your repository. Use environment variables or `.env` files (add `.env` to `.gitignore`).
+**Expected Result (per documentation):**
+```
+HTTP/1.1 422 Unprocessable Content
+{ "error": "Invalid 'name' parameter" }
+```
+
+**Actual Result:**
+```
+HTTP/1.1 400 Bad Request
+{ "error": "Invalid 'name' parameter" }
+```
+
+**Analysis:**
+- The error message is correct, but the HTTP status code violates the documented API contract
+- Clients implementing error handling based on the documentation would not catch this error correctly
+- This is a contract violation that could cause integration issues
+
+**Test Approach:**
+- Test is written to expect the **documented behaviour** (422)
+- Test intentionally fails to flag this as a regression/bug
+- Tagged with `@bug` so it can be filtered during CI runs if needed
+
+**Recommendation:**
+Report to agify.io team requesting either:
+1. Update the API to return 422 as documented, or
+2. Update the documentation to reflect the actual 400 response
+
+### Observation: Empty Name Parameter Behaviour
+
+**Request:** `GET https://api.agify.io?name=`
+
+**Expected:** Based on the "Missing 'name' parameter" error, one might expect an error for empty strings.
+
+**Actual:** Returns 200 with a valid response structure (empty name is treated as valid input).
+
+**Impact:** This is not necessarily a bug, but the behaviour is undocumented. The API accepts empty strings as valid input.
 
 ## Project Structure
 
 ```
 agify-api-tests/
-├── features/              # Cucumber feature files
-│   ├── agify.feature     # BDD scenarios (38 scenarios)
-│   └── support/          # Step definitions and setup
+├── features/
+│   ├── agify.feature          # BDD scenarios
+│   └── support/
 │       ├── steps/
-│       │   └── agify.steps.ts  # Step implementations
-│       └── world.ts      # Test context
-├── src/                  # Source code
-│   └── api/              
-│       └── agifyClient.ts # API client (includes batch support)
-├── reports/              # Test reports (generated)
+│       │   └── agify.steps.ts # Step definitions
+│       └── world.ts           # Test context
+├── src/
+│   └── api/
+│       └── agifyClient.ts     # API client
+├── package.json
+├── tsconfig.json
 └── README.md
 ```
 
-## API Features Implemented
+## API Client
 
-### Single Name Requests
+The `AgifyClient` class provides methods for all API operations:
+
 ```typescript
-const response = await client.getAgePrediction('Michael');
-// Returns: { name: "Michael", age: 62, count: 298219 }
+// Single name
+await client.getAgePrediction('Michael');
+
+// With country localisation
+await client.getAgePredictionWithCountry('Michael', 'US');
+
+// Batch request
+await client.getBatchAgePredictions(['Michael', 'Sarah', 'David']);
+
+// With authentication
+await client.getAgePredictionWithAuth('Michael', apiKey);
 ```
 
-### Batch Requests
-```typescript
-const names = ['Michael', 'Sarah', 'David'];
-const response = await client.getBatchAgePredictions(names);
-// Returns array of predictions
-```
+## Rate Limiting
 
-### Localization
-```typescript
-const response = await client.getAgePredictionWithCountry('Michael', 'US');
-// Returns: { name: "Michael", age: 62, count: 108496, country_id: "US" }
-```
+The free tier allows 100 requests/day. Tests are organised with tags to manage this:
 
-### With Authentication
-```typescript
-const response = await client.getAgePredictionWithAuth('Michael', apiKey);
-```
+- Run `npm test -- --tags "not @skip"` to stay within limits (~31 requests)
+- Use an API key for unlimited testing
 
-## Test Results
+## Running Authentication Tests
 
-**Current Status**: 38/38 scenarios passing ✅
-
-### Execution Summary
-```
-38 scenarios (38 passed)
-167 steps (167 passed)
-Execution time: ~8.1 seconds
-```
-
-## Discovered API Behaviors
-
-### 1. Empty Name Parameter
-- **Expected (per documentation)**: 422 status
-- **Actual behavior**: 200 status with valid response structure
-- **Conclusion**: Empty strings are treated as valid input
-
-### 2. Invalid UTF8 Parameter
-- **Documentation**: Generic "Invalid 'name' parameter"
-- **Actual error**: "Invalid UTF8 in 'name' parameter"
-- **Conclusion**: API provides more specific error messages than documented
-
-### 3. Batch Requests
-- Successfully implemented and tested
-- Uses `name[]=value` query parameter format
-- Each name counts toward rate limit
-- Returns array of predictions
-
-## Rate Limiting Considerations
-
-The agify.io API has a free tier limit of **100 requests per day**.
-
-**Recommendations**:
-- Use tag filtering to run subsets of tests during development
-- For CI/CD, consider using an API key for higher limits
-- Tests automatically reset after the daily rate limit window
-
-### Example Daily Test Strategy
 ```bash
-# Morning: Run active tests (uses ~25 requests)
-npm test -- --tags "not @skip and not @localization"
+# Set API key
+export AGIFY_API_KEY="your_key"  # Linux/Mac
+$env:AGIFY_API_KEY="your_key"   # Windows PowerShell
 
-# Afternoon: Run localization tests (uses ~12 requests)
-npm test -- --tags "@localization"
-
-# Total: ~37 requests (well within 100/day limit)
+# Run auth tests
+npm test -- --tags "@skip"
 ```
 
-## Known Issues & Limitations
+## Dependencies
 
-1. **Rate Limiting**: The API has rate limits. Tests are organized with tags to manage this.
+- `@cucumber/cucumber` - BDD framework
+- `axios` - HTTP client
+- `typescript` - Type safety
+- `ts-node` - TypeScript execution
 
-2. **Data Accuracy**: These tests validate API functionality, NOT the accuracy of age predictions.
+## Notes
 
-3. **Network Dependency**: Tests require internet connectivity to reach api.agify.io.
-
-4. **API Key Tests**: Authentication and rate limit tests require a paid API key.
-
-## Troubleshooting
-
-### Rate Limit Errors (429)
-If you encounter 429 errors:
-```bash
-# Run only active tests
-npm test -- --tags "not @skip and not @localization"
-
-# Or wait 24 hours for reset
-```
-
-### Installation Issues
-1. Verify Node.js and npm versions match requirements
-2. Delete `node_modules` and `package-lock.json`, then run `npm install` again
-3. Check internet connectivity
-4. Verify api.agify.io is accessible from your network
-
-### Test Failures
-1. Check if rate limit has been exceeded (see error message)
-2. Verify API is accessible: `curl https://api.agify.io?name=test`
-3. Review test output for specific failure details
-
-## Development Environment
-
-Tested with:
-- Node.js v25.2.1
-- npm v10.9.2
-- TypeScript v5.3.3
-- @cucumber/cucumber v10.9.0
-
-## CI/CD Integration
-
-### Recommended CI Configuration
-
-```yaml
-# .github/workflows/test.yml example
-name: API Tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - run: npm install
-      - name: Run Active Tests
-        run: npm test -- --tags "not @skip and not @localization"
-      - name: Run All Tests (with API key)
-        if: github.event_name == 'push'
-        env:
-          AGIFY_API_KEY: ${{ secrets.AGIFY_API_KEY }}
-        run: npm test
-```
-
-### Generate JSON Report
-```bash
-npm test -- --format json:reports/cucumber-report.json
-```
-
-## Contributing
-
-When adding new tests:
-1. Follow existing step definition patterns
-2. Use appropriate tags (@skip for API key tests, @localization for country tests)
-3. Update this README with new coverage
-4. Ensure tests are idempotent and don't depend on execution order
-
-## License
-
-This test suite is provided as-is for testing the Agify.io API.
-
-## Resources
-
-- [Agify.io API Documentation](https://agify.io/documentation)
-- [Agify.io Store](https://agify.io/store) (for API keys)
-- [Cucumber Documentation](https://cucumber.io/docs/cucumber/)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- Tests validate API functionality, not data accuracy (as per requirements)
+- All tests are API-based, no UI/browser testing
+- Written in TypeScript using Cucumber BDD framework

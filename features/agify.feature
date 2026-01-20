@@ -8,7 +8,7 @@ Feature: Agify.io API
   # - 401: Unauthorized - Invalid API key (@skip)
   # - 402: Payment Required - Expired subscription (@skip)
   # - 422: Unprocessable Content - Missing name parameter (active)
-  # - 422: Unprocessable Content - Invalid UTF8 in name parameter (active)
+  # - 422: Unprocessable Content - Invalid name parameter (active - API BUG: returns 400)
   # - 429: Too Many Requests - Request limit reached (@skip)
   # - 429: Too Many Requests - Batch limit too low (@skip)
 
@@ -276,7 +276,13 @@ Feature: Agify.io API
     And the response should contain an error message "Request limit too low to process request"
 
   # Invalid Name Parameter Test
+  # BUG: API returns 400 instead of documented 422
+  # Documentation: https://agify.io/documentation
+  # Expected: 422 Unprocessable Content with { "error": "Invalid 'name' parameter" }
+  # Actual: 400 Bad Request with { "error": "Invalid 'name' parameter" }
+  # This test expects documented behaviour to flag the discrepancy
+  @bug
   Scenario: Request with invalid UTF8 in name parameter
     When I request age prediction with an invalid name parameter
     Then the response status should be 422
-    And the response should contain an error message "Invalid UTF8 in 'name' parameter"
+    And the response should contain an error message "Invalid 'name' parameter"

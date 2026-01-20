@@ -296,9 +296,8 @@ Then('the batch predictions should have different counts than global predictions
 
 // Invalid name parameter step
 When('I request age prediction with an invalid name parameter', async function (this: CustomWorld) {
-  // Try various potentially invalid inputs to see what triggers the error
-  // Based on testing, we'll use a null byte which many APIs reject
-  this.response = await this.agifyClient.getAgePrediction('test\x00invalid');
+  // Send actual invalid UTF-8 byte sequences that cannot be properly encoded
+  this.response = await this.agifyClient.getAgePredictionWithInvalidUtf8();
 });
 
 Given('I have only {int} requests remaining in my quota', async function (this: CustomWorld, remaining: number) {

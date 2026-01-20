@@ -158,4 +158,25 @@ export class AgifyClient {
   getLastResponseTime(): number {
     return this.lastResponseTime;
   }
+
+  async getAgePredictionWithInvalidUtf8(): Promise<AxiosResponse> {
+    const startTime = Date.now();
+    
+    try {
+      // Send invalid UTF-8 byte sequences directly in the URL
+      // %C0 is an invalid UTF-8 start byte (overlong encoding)
+      // %FF is never valid in UTF-8
+      const invalidUrl = `${this.baseUrl}?name=test%C0%C1%FF`;
+      
+      const response = await axios.get(invalidUrl, {
+        validateStatus: () => true
+      });
+      
+      this.lastResponseTime = Date.now() - startTime;
+      return response;
+    } catch (error) {
+      this.lastResponseTime = Date.now() - startTime;
+      throw error;
+    }
+  }
 }
