@@ -4,6 +4,11 @@
   "description": "BDD tests for agify.io API",
   "scripts": {
     "test": "cucumber-js",
+    "test:core": "cucumber-js --tags \"not @rate_limited and not @skip\"",
+    "test:functional": "cucumber-js --tags \"not @security and not @skip\"",
+    "test:security": "cucumber-js --tags @security",
+    "test:rate-limited": "cucumber-js --tags @rate_limited",
+    "test:all": "cucumber-js --tags \"not @skip\"",
     "test:report": "cucumber-js --format html:reports/cucumber-report.html"
   },
   "devDependencies": {

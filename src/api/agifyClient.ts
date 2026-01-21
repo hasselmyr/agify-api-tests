@@ -164,11 +164,50 @@ export class AgifyClient {
     
     try {
       // Send invalid UTF-8 byte sequences directly in the URL
-      // %C0 is an invalid UTF-8 start byte (overlong encoding)
-      // %FF is never valid in UTF-8
+      // %C0 and %C1 are invalid UTF-8 start bytes (overlong encoding)
+      // %FF is never valid in UTF-8 (reserved for internal use)
+      // These should trigger a 422 error according to API documentation
       const invalidUrl = `${this.baseUrl}?name=test%C0%C1%FF`;
       
       const response = await axios.get(invalidUrl, {
+        validateStatus: () => true
+      });
+      
+      this.lastResponseTime = Date.now() - startTime;
+      return response;
+    } catch (error) {
+      this.lastResponseTime = Date.now() - startTime;
+      throw error;
+    }
+  }
+
+  async getWithDuplicateNameParams(name1: string, name2: string): Promise<AxiosResponse> {
+    const startTime = Date.now();
+    
+    try {
+      // Manually construct URL with duplicate name parameters
+      const url = `${this.baseUrl}?name=${encodeURIComponent(name1)}&name=${encodeURIComponent(name2)}`;
+      
+      const response = await axios.get(url, {
+        validateStatus: () => true
+      });
+      
+      this.lastResponseTime = Date.now() - startTime;
+      return response;
+    } catch (error) {
+      this.lastResponseTime = Date.now() - startTime;
+      throw error;
+    }
+  }
+
+  async getWithWrongParameterName(paramName: string): Promise<AxiosResponse> {
+    const startTime = Date.now();
+    
+    try {
+      // Use wrong parameter name (e.g., "Name" instead of "name")
+      const url = `${this.baseUrl}?${paramName}=John`;
+      
+      const response = await axios.get(url, {
         validateStatus: () => true
       });
       
