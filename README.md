@@ -44,6 +44,14 @@ npm test -- --tags @security
 npm test -- --tags "not @skip"
 ```
 
+### Generate HTML Report
+```bash
+npm run test:report
+
+# Report will be created at: reports/cucumber-report.html
+# Open in browser to view detailed results
+```
+
 ## Test Coverage
 
 The test suite is organized into **Functional Testing** and **Security Testing** sections.
@@ -100,6 +108,20 @@ The test suite is organized into **Functional Testing** and **Security Testing**
 - Expired subscriptions
 
 ## Issues Found
+
+### CRITICAL: API Currently Unreachable
+**Status:** Blocking - Tests cannot execute  
+**Issue:** agify.io API is not responding to requests (connection timeout)  
+**Impact:** All tests fail at runtime, preventing demonstration of test execution  
+
+**Current Workaround:** Background connectivity check disabled  
+**Recommended Fix:** 
+- Wait for API to become available
+- Implement mock responses for demo purposes
+- Use local API stub server
+
+**Test Results:** `npm run test:core` - 47 scenarios fail due to connectivity  
+**Last Verified:** API unreachable from current environment
 
 ### BUG: Invalid UTF-8 Returns Wrong Status Code
 
