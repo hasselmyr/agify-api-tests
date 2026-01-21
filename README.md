@@ -2,7 +2,7 @@
 
 BDD test suite for the [agify.io](https://agify.io) API using Cucumber and TypeScript.
 
-**Author:** Anton  
+**Author:** Anton Hasselmyr
 **Purpose:** Kaluza QA Engineer Technical Assessment
 
 ## Requirements
