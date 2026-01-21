@@ -50,7 +50,7 @@ Feature: Agify.io API
     And the response should contain an age field
 
     Examples:
-      | name      |
+      | n         |
       | John      |
       | Maria     |
       | Wei       |
@@ -82,10 +82,11 @@ Feature: Agify.io API
     Then the response status should be 422
     And the response should contain an error message
 
+  @bug
   Scenario: Request with empty name parameter
     When I request age prediction for name ""
-    Then the response status should be 200
-    And the response should contain a name field
+    Then the response status should be 422
+    And the response should contain an error message
 
   Scenario: Request with single character name
     When I request age prediction for name "J"
@@ -114,12 +115,17 @@ Feature: Agify.io API
     And the response should contain a name field
 
     Examples:
-      | name         |
+      | n            |
       |  Michael     |
       | Michael      |
       |  Sarah       |
       | John  Smith  |
-      |              |
+
+  @bug
+  Scenario: Request with whitespace-only name parameter
+    When I request age prediction for name "   "
+    Then the response status should be 422
+    And the response should contain an error message
 
   # BUG: API returns 400 instead of documented 422
   # Documentation: https://agify.io/documentation
@@ -139,7 +145,7 @@ Feature: Agify.io API
 # These tests verify the API handles various character sets and encodings
 
   Scenario Outline: Request with international characters
-    When I request age prediction for name "<n>"
+    When I request age prediction for name "<name>"
     Then the response status should be 200
     And the response should contain a name field
 
@@ -161,7 +167,7 @@ Feature: Agify.io API
     And the response should contain a name field
 
   Scenario Outline: Request with names containing apostrophes
-    When I request age prediction for name "<n>"
+    When I request age prediction for name "<name>"
     Then the response status should be 200
     And the response should contain a name field
     And the response should contain an age field
@@ -271,7 +277,7 @@ Feature: Agify.io API
     Then the response status should be 200
     And the response should contain 3 predictions
 
-  @localization
+  @localization @rate_limited
   Scenario: Batch request with country localization
     When I request age predictions for the following names with country code "US":
       | Michael  |
@@ -281,7 +287,7 @@ Feature: Agify.io API
     And each prediction should have name, age, and count fields
     And each prediction should include a country_id field with value "US"
 
-  @localization
+  @localization @rate_limited
   Scenario: Batch localization improves prediction accuracy
     When I request age predictions for the following names with country code "ES":
       | Maria    |
