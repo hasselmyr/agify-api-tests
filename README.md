@@ -18,7 +18,7 @@ npm install
 
 ## Running Tests
 
-⚠️ **IMPORTANT:** The free API tier has a 100 requests/day limit.
+⚠️ **IMPORTANT:** The free API tier allows 100 names/day.
 
 ### Core (Recommended)
 ```bash
@@ -28,7 +28,7 @@ npm run test:core
 
 ### Full Suite (Fresh Quota)
 ```bash
-# Run all tests - includes rate-limited security & batch tests (~95 API calls)
+# Run all tests - includes rate-limited security & batch tests (~95 names)
 npm test
 ```
 
@@ -152,7 +152,7 @@ Scenario: Request with whitespace-only name parameter
 
 ### NOTE: Rate Limiting (429)
 
-The free tier allows 100 requests/day. When the quota is exhausted, many scenarios will return `429`.
+The free tier allows 100 names/day. When the quota is exhausted, many scenarios will return `429`.
 
 ## Latest Test Run
 
@@ -204,8 +204,8 @@ await client.getBatchAgePredictions(['Michael', 'Sarah', 'David']);
 
 ## Rate Limiting
 
-**Free tier:** 100 requests per day  
-**Test suite:** ~95 API calls for full suite
+**Free tier:** 100 names per day  
+**Test suite:** ~95 names for full suite
 
 Tests are tagged with `@rate_limited` for flexible execution:
 - Core tests exclude rate-limited tests for daily development
