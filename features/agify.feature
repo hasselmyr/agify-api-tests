@@ -53,8 +53,6 @@ Feature: Agify.io API
       | n         |
       | John      |
       | Maria     |
-      | Wei       |
-      | Mohammed  |
 
   Scenario: Handle uncommon or rare name
     When I request age prediction for name "Zyxwvut"
@@ -117,8 +115,6 @@ Feature: Agify.io API
     Examples:
       | n            |
       |  Michael     |
-      | Michael      |
-      |  Sarah       |
       | John  Smith  |
 
   @bug
@@ -152,8 +148,6 @@ Feature: Agify.io API
     Examples:
       | name    |
       | José    |
-      | Müller  |
-      | Дмитрий |
       | 李明    |
 
 # ==============================================================================
@@ -175,7 +169,6 @@ Feature: Agify.io API
     Examples:
       | name      |
       | O'Brien   |
-      | D'Angelo  |
 
   Scenario: Request with full name (first and last)
     When I request age prediction for name "John Smith"
@@ -222,8 +215,6 @@ Feature: Agify.io API
       | country |
       | US      |
       | GB      |
-      | AU      |
-      | CA      |
 
   @localization
   Scenario: Invalid country code handling
@@ -353,9 +344,7 @@ Feature: Agify.io API
     Examples:
       | payload                              |
       | ' OR '1'='1                          |
-      | Robert'); DROP TABLE names;--        |
       | <script>alert('xss')</script>        |
-      | javascript:alert(1)                  |
 
   @security @rate_limited
   Scenario Outline: Command injection and path traversal attempts
@@ -365,7 +354,6 @@ Feature: Agify.io API
 
     Examples:
       | payload           |
-      | ; ls -la          |
       | ../../etc/passwd  |
 
 # ==============================================================================

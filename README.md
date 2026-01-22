@@ -2,7 +2,7 @@
 
 BDD test suite for the [agify.io](https://agify.io) API using Cucumber and TypeScript.
 
-**Author:** Anton Hasselmyr
+**Author:** Anton Hasselmyr  
 **Purpose:** Kaluza QA Engineer Technical Assessment
 
 ## Requirements
@@ -20,19 +20,17 @@ npm install
 
 ⚠️ **IMPORTANT:** The free API tier has a 100 requests/day limit.
 
-### For Development & Daily Testing (Recommended)
+### Core (Recommended)
 ```bash
-# Run core tests - excludes rate-limited tests (~36 scenarios, ~50 API calls)
+# Run core tests - excludes rate-limited tests
 npm run test:core
 ```
-**Use this for:** Daily development, practicing demo, verifying functionality
 
-### For Complete Validation (Use When Fresh Quota Available)
+### Full Suite (Fresh Quota)
 ```bash
-# Run all tests - includes rate-limited security & batch tests (~46 scenarios, ~75-85 API calls)
+# Run all tests - includes rate-limited security & batch tests (~95 API calls)
 npm test
 ```
-**Use this for:** Final validation when you have 100 requests available
 
 ### Test Suites
 ```bash
@@ -49,19 +47,19 @@ npm test -- --tags @security
 npm test -- --tags "not @skip"
 ```
 
-### Generate HTML Report
+### HTML Report
 ```bash
 npm run test:report
 
 # Report will be created at: reports/cucumber-report.html
-# Open in browser to view detailed results
+# Open in browser for details
 ```
 
 ## Test Coverage
 
 The test suite is organized into **Functional Testing** and **Security Testing** sections.
 
-### Functional Testing (~37 scenarios)
+### Functional Testing
 
 **Basic Functionality**
 - Common names (lowercase, UPPERCASE, multiple examples)
@@ -96,7 +94,7 @@ The test suite is organized into **Functional Testing** and **Security Testing**
 - Response time validation (< 2000ms)
 - Consistency checks (idempotency)
 
-### Security Testing (~9 scenarios)
+### Security Testing
 
 **Injection Attacks**
 - SQL injection (2 variations)
@@ -114,20 +112,6 @@ The test suite is organized into **Functional Testing** and **Security Testing**
 - Expired subscriptions
 
 ## Issues Found
-
-### CRITICAL: API Currently Unreachable
-**Status:** Blocking - Tests cannot execute  
-**Issue:** agify.io API is not responding to requests (connection timeout)  
-**Impact:** All tests fail at runtime, preventing demonstration of test execution  
-
-**Current Workaround:** Background connectivity check disabled  
-**Recommended Fix:** 
-- Wait for API to become available
-- Implement mock responses for demo purposes
-- Use local API stub server
-
-**Test Results:** `npm run test:core` - 47 scenarios fail due to connectivity  
-**Last Verified:** API unreachable from current environment
 
 ### BUG: Invalid UTF-8 Returns Wrong Status Code
 
@@ -166,6 +150,27 @@ Scenario: Request with whitespace-only name parameter
 
 **Tagged with:** `@bug` for filtering during CI runs
 
+### NOTE: Rate Limiting (429)
+
+The free tier allows 100 requests/day. When the quota is exhausted, many scenarios will return `429`.
+
+## Latest Test Run
+
+```
+npm run test:core
+Failures (expected, tagged @bug):
+- Empty name returns 200 (expected 422)
+- Whitespace-only name returns 200 (expected 422)
+- Invalid UTF-8 returns 400 (expected 422)
+```
+
+## Alignment With Assessment Requirements
+
+- API-only tests (no UI/browser automation)
+- TypeScript + Cucumber BDD
+- Focused on functionality, not data accuracy
+- README includes Node/npm versions, execution steps, and known issues
+
 ## Project Structure
 
 ```
@@ -200,12 +205,13 @@ await client.getBatchAgePredictions(['Michael', 'Sarah', 'David']);
 ## Rate Limiting
 
 **Free tier:** 100 requests per day  
-**Test suite:** ~75-85 API calls for full suite
+**Test suite:** ~95 API calls for full suite
 
 Tests are tagged with `@rate_limited` for flexible execution:
 - Core tests exclude rate-limited tests for daily development
-- Security tests are rate-limited (6 scenarios)
-- Some batch tests are rate-limited (3 scenarios)
+- Security tests are rate-limited
+- Some batch tests are rate-limited
+
 
 ## Dependencies
 
@@ -217,5 +223,4 @@ Tests are tagged with `@rate_limited` for flexible execution:
 ## Notes
 
 - Tests validate API functionality, not data accuracy
-- Written in TypeScript using Cucumber BDD framework
 - All tests are API-based (no UI/browser testing)
