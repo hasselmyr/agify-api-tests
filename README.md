@@ -26,6 +26,11 @@ npm install
 npm run test:core
 ```
 
+```bash
+# Run core tests excluding known API mismatches (@bug)
+npm run test:core:clean
+```
+
 ### Full Suite (Fresh Quota)
 ```bash
 # Run all tests - includes rate-limited security & batch tests (~95 names)

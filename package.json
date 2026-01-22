@@ -5,6 +5,7 @@
   "scripts": {
     "test": "cucumber-js",
     "test:core": "cucumber-js --tags \"not @rate_limited and not @skip\"",
+    "test:core:clean": "cucumber-js --tags \"not @rate_limited and not @skip and not @bug\"",
     "test:functional": "cucumber-js --tags \"not @security and not @skip\"",
     "test:security": "cucumber-js --tags @security",
     "test:rate-limited": "cucumber-js --tags @rate_limited",
