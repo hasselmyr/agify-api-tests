@@ -12,9 +12,6 @@ Feature: Agify.io API
   # - 429: Too Many Requests - Request limit reached (@skip)
   # - 429: Too Many Requests - Batch limit too low (@skip)
 
-  Background:
-    Given the agify.io API is available
-
 ################################################################################
 #                          FUNCTIONAL TESTING                                  #
 ################################################################################

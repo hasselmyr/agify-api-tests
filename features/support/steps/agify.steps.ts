@@ -2,20 +2,6 @@ import { Given, When, Then, DataTable } from '@cucumber/cucumber';
 import { CustomWorld } from '../world';
 import { strict as assert } from 'assert';
 
-Given('the agify.io API is available', async function (this: CustomWorld) {
-  // Basic connectivity check - non-blocking to allow tests to run even if API is temporarily down
-  try {
-    const response = await this.agifyClient.getAgePrediction('test');
-    if (!response.status || response.status < 200 || response.status >= 300) {
-      console.warn('⚠️  API connectivity issue detected - some tests may fail');
-    }
-  } catch (error) {
-    console.warn('⚠️  API is currently unreachable - tests may fail');
-    console.warn('   This is expected if agify.io is down. Tests will continue anyway.');
-    // Don't fail here - let individual scenarios handle API errors
-  }
-});
-
 When('I request age prediction for name {string}', async function (this: CustomWorld, name: string) {
   this.response = await this.agifyClient.getAgePrediction(name);
 });
