@@ -7,7 +7,7 @@ BDD test suite for the [agify.io](https://agify.io) API using Cucumber and TypeS
 
 ## Requirements
 
-- Node.js v25.2.1
+- Node.js >= 18 (LTS 20/22 recommended)
 - npm v10.9.2
 
 ## Installation
@@ -96,10 +96,11 @@ The test suite is organized into **Functional Testing** and **Security Testing**
 - Batch with country localization
 
 **Performance**
-- Response time validation (< 2000ms)
+- Response time validation (< 2000ms) as a soft signal (network-dependent)
 - Consistency checks (idempotency)
 
 ### Security Testing
+These are negative tests for handling untrusted input (validation/sanitization)
 
 **Injection Attacks**
 - SQL injection (2 variations)
